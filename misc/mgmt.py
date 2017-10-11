@@ -58,6 +58,7 @@ def push(transaction, secret=None, secondSecret=None):
 	if isinstance(transaction, core.Transaction):
 		FIFO.put([transaction, secret, secondSecret])
 
+
 def start():
 	global THREADS
 	# first, check if there still is alive thread
@@ -70,6 +71,7 @@ def start():
 		THREADS.append(TxMGMT())
 	LOG_LOCK.set()
 	THREADS.append(TxLOG())
+
 
 def stop():
 	global THREADS
@@ -91,6 +93,7 @@ def stop():
 	# put a stop token for TxLOG thread in cfg.__LOG__ queue
 	if THREADS[-1].isAlive():
 		cfg.__LOG__.put(False)
+
 
 def join():
 	while not FIFO.empty(): time.sleep(2)

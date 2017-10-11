@@ -37,18 +37,18 @@ class PeerError(Exception):
 
 def get(api, dic={}, **kw):
 	"""
-ARK API call using requests lib. It returns server response as ArkyDict object.
-It uses default peers registered in SEEDS list.
+	ARK API call using requests lib. It returns server response as ArkyDict object.
+	It uses default peers registered in SEEDS list.
 
-Argument:
-api (str) -- api url path
+	Argument:
+	api (str) -- api url path
 
-Keyword argument:
-dic (dict) -- api parameters as dict type
-**kw       -- api parameters as keyword argument (overwriting dic ones)
+	Keyword argument:
+	dic (dict) -- api parameters as dict type
+	**kw       -- api parameters as keyword argument (overwriting dic ones)
 
-Returns ArkyDict
-"""
+	Returns ArkyDict
+	"""
 	# merge dic and kw values
 	args = dict(dic, **kw)
 	# API response contains several fields and wanted one can be extracted using
@@ -71,15 +71,15 @@ Returns ArkyDict
 
 def _signTx(tx, secret=None, secondSecret=None):
 	"""
-Try to sign Transaction with secret and secondSecret.
+	Try to sign Transaction with secret and secondSecret.
 
-Argument:
-tx (core.Transaction) -- transaction
-secret (str)          -- secret passphrase
-secondSecret (str)    -- second secret passphrase
+	Argument:
+	tx (core.Transaction) -- transaction
+	secret (str)          -- secret passphrase
+	secondSecret (str)    -- second secret passphrase
 
-Returns core.Transaction object
-"""
+	Returns core.Transaction object
+	"""
 	if not secret:
 		try:
 			return tx.sign()
@@ -91,20 +91,20 @@ Returns core.Transaction object
 
 def sendTx(tx, secret=None, secondSecret=None, url_base=None):
 	"""
-Send backed transaction using optional url_base and eventualy secrets. It
-returns server response as ArkyDict object. If secrets are given, transaction is
-signed and then broadcasted with signatures and id. It does not send secrets.
+	Send backed transaction using optional url_base and eventualy secrets. It
+	returns server response as ArkyDict object. If secrets are given, transaction is
+	signed and then broadcasted with signatures and id. It does not send secrets.
 
-Argument:
-tx (core.Transaction | list | tuple) -- transaction object(s) to be send
+	Argument:
+	tx (core.Transaction | list | tuple) -- transaction object(s) to be send
 
-Keyword argument:
-url_base     (str) -- the base api url to use
-secret       (str) -- secret of the account sending the transaction
-secondSecret (str) -- second secret of account sending the transaction
+	Keyword argument:
+	url_base     (str) -- the base api url to use
+	secret       (str) -- secret of the account sending the transaction
+	secondSecret (str) -- second secret of account sending the transaction
 
-Returns ArkyDict
-"""
+	Returns ArkyDict
+	"""
 	# use registered peer if no url_base is given
 	if url_base == None: url_base = random.choice(SEEDS)
 
@@ -136,18 +136,18 @@ Returns ArkyDict
 
 def broadcast(tx, secret=None, secondSecret=None):
 	"""
-Send transaction using multiple peers. It avoid broadcasting errors when large
-amount of peers are unresponsive or not up to date.
+	Send transaction using multiple peers. It avoid broadcasting errors when large
+	amount of peers are unresponsive or not up to date.
 
-Argument:
-tx (core.Transaction | list | tuple) -- transaction object(s) to be send
+	Argument:
+	tx (core.Transaction | list | tuple) -- transaction object(s) to be send
 
-Keyword argument:
-secret       (str) -- secret of the account sending the transaction
-secondSecret (str) -- second secret of account sending the transaction
+	Keyword argument:
+	secret       (str) -- secret of the account sending the transaction
+	secondSecret (str) -- second secret of account sending the transaction
 
-Returns ArkyDict
-"""
+	Returns ArkyDict
+	"""
 	result = sendTx(tx, secret=None, secondSecret=None)
 	ratio = 0.
 	if result.success:
@@ -159,14 +159,14 @@ Returns ArkyDict
 
 def postData(url_base, data):
 	"""
-Send serialized transaction using url_base node.
+	Send serialized transaction using url_base node.
 
-Argument:
-url_base (str) -- node address to use as api entry point
-data (dict)    -- serialized transaction
+	Argument:
+	url_base (str) -- node address to use as api entry point
+	data (dict)    -- serialized transaction
 
-Returns ArkyDict server response
-"""
+	Returns ArkyDict server response
+	"""
 	if cfg.__HOT_MODE__:
 		try:
 			text = requests.post(url_base + "/peer/transactions", data=data, headers=cfg.__HEADERS__, timeout=10).text
@@ -182,14 +182,14 @@ Returns ArkyDict server response
 
 def broadcastSerial(serial):
 	"""
-Send serialized transaction using multiple peers. It avoid broadcasting errors
-when large amount of peers are unresponsive or not up to date.
+	Send serialized transaction using multiple peers. It avoid broadcasting errors
+	when large amount of peers are unresponsive or not up to date.
 
-Argument:
-serail (dict) -- serialized transaction
+	Argument:
+	serail (dict) -- serialized transaction
 
-Returns ArkyDict server response
-"""
+	Returns ArkyDict server response
+	"""
 	data = json.dumps({"transactions": [serial]})
 	result = postData(random.choice(SEEDS), data)
 	ratio = 0.
@@ -214,16 +214,16 @@ def checkPeerLatency(peer, timeout=10):
 
 def use(network="dark", custom_seed=None, broadcast=10, latency=1):
 	"""
-Select ARK network.
+	Select ARK network.
 
-Keyword argument:
-network     (str) -- network name you want to connetc with
-custom_seed (str) -- a custom peer you want to choose
-broadcast   (int) -- max valid peer number to use for broadcasting
-latency     (int) -- max latency you want in second
+	Keyword argument:
+	network     (str) -- network name you want to connetc with
+	custom_seed (str) -- a custom peer you want to choose
+	broadcast   (int) -- max valid peer number to use for broadcasting
+	latency     (int) -- max latency you want in second
 
-Returns None
-"""
+	Returns None
+	"""
 	global SEEDS, PEERS, ROOT
 
 	# find network configuration files (*.net) and load it if a filename match asked

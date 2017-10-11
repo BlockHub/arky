@@ -18,13 +18,16 @@ _exit=\
 
 wdg.DataView.headers = ["id", "date", "type", "amount", "senderId", "recipientId", "vendorField"]
 
+
 @wdg.setInterval(60)
 def _update_candidates():
 	wdg.AddressPanel.candidates = api.Delegate.getCandidates()
 
-# class containing all global vars and functions
-# ----------------------
+
 class Glob:
+	"""
+	Class containing all global variables and functions
+	"""
 
 	sendpanel = None
 	votepannel = None
@@ -40,9 +43,11 @@ class Glob:
 		Glob.rootfolder = os.path.normpath(os.path.abspath(os.path.dirname(sys.executable if Glob.main_is_frozen() else __file__)))
 # ----------------------
 
+
 def checkWalletMenu():
 	if wdg.AddressPanel.address:
 		pass
+
 
 def appendHistoryValue(key, value):
 	if key not in Glob.history[cfg.__NET__]:
@@ -50,18 +55,22 @@ def appendHistoryValue(key, value):
 	elif value not in Glob.history[cfg.__NET__][key]:
 		Glob.history[cfg.__NET__][key].append(value)
 
+
 def getHistoryList(key):
 	return Glob.history.get(cfg.__NET__, {}).get(key, [])
+
 
 def dropHistory():
 	out = io.open(os.path.join(Glob.rootfolder, "history.json"), "w" if __PY3__ else "wb")
 	json.dump(Glob.history, out, indent=2)
 	out.close()
 
+
 def loadHistory():
 	in_ = io.open(os.path.join(Glob.rootfolder, "history.json"), "r" if __PY3__ else "rb")
 	Glob.history = json.load(in_)
 	in_.close()
+
 
 def signTransaction(widget, destroy=True):
 	wdg.KeyDialog.address = wdg.AddressPanel.address
@@ -77,11 +86,13 @@ def signTransaction(widget, destroy=True):
 		if answer.success:
 			appendHistoryValue("sendpanel.recipientId", tx.recipientId)
 
+
 def hidePanels():
 	try: Glob.sendpanel.destroy()
 	except: pass
 	try: Glob.votepannel.destroy()
 	except: pass
+
 
 def showSendPanel(master):
 	hidePanels()
@@ -89,10 +100,12 @@ def showSendPanel(master):
 	Glob.sendpanel.recipientId["values"] = Glob.history.get(cfg.__NET__, {}).get("sendpanel.recipientId", [])
 	Glob.sendpanel.button["command"] = lambda w=Glob.sendpanel: signTransaction(w)
 
+
 def showVotePanel(master):
 	hidePanels()
 	Glob.votepannel = wdg.VotePanel(master, relief="solid", padding=4).place(anchor="center", relx=0.5, rely=1-1/1.618033989)
 	Glob.votepannel.button["command"] = lambda w=Glob.votepannel: signTransaction(w, destroy=False)
+
 
 def loadTransaction(*args, **kwargs):
 	Glob.addresspanel.update()
@@ -100,6 +113,7 @@ def loadTransaction(*args, **kwargs):
 	if wdg.AddressPanel.address != None:
 		appendHistoryValue("addresspanel.wallet", wdg.AddressPanel.address)
 		Glob.addresspanel.combo["values"] = tuple(getHistoryList("addresspanel.wallet"))
+
 
 def networkUse(network):
 	hidePanels()
@@ -114,6 +128,7 @@ def networkUse(network):
 def exit():
 	dropHistory()
 	sys.exit()
+
 
 #############
 def launch():

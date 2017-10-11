@@ -10,6 +10,7 @@ try:
 except:
 	__MATPLOTLIB__ = False
 
+
 def plot2D(*points, **kw):
 	if __MATPLOTLIB__:
 		xlabel = kw.pop("xlabel", None)
@@ -23,6 +24,7 @@ def plot2D(*points, **kw):
 		if ylabel: plt.ylabel(ylabel)
 		if title: plt.title(title)
 		plt.show()
+
 
 def getTransactions(timestamp=0, **param):
 	param.update(returnKey="transactions", limit=50, orderBy="timestamp:desc")
@@ -39,6 +41,7 @@ def getTransactions(timestamp=0, **param):
 	else:
 		raise Exception(txs.get("error", "Api error"))
 	return sorted([t for t in txs if t["timestamp"] >= timestamp], key=lambda e:e["timestamp"], reverse=True)
+
 
 def getHistory(address, timestamp=0):
 	# get all inputs
@@ -65,6 +68,7 @@ def getHistory(address, timestamp=0):
 		raise Exception(tx_in.get("error", "Api error"))
 	return sorted([t for t in tx_in if t["timestamp"] >= timestamp], key=lambda e:e["timestamp"], reverse=True)
 
+
 def getBalanceHistory(address, timestamp=0):
 	balance = float(api.Account.getBalance(address, returnKey="balance"))/100000000.
 	history = getHistory(address, timestamp)
@@ -80,6 +84,7 @@ def getBalanceHistory(address, timestamp=0):
 		result.insert(0, (slots.getRealTime(timestamp), balance))
 		return result
 
+
 def getVoteHistory(address, timestamp=0):
 	history = [tx for tx in getHistory(address, timestamp) if tx["type"] == 3]
 	candidates = dict([d["publicKey"], d["username"]] for d in api.Delegate.getCandidates())
@@ -93,6 +98,7 @@ def getVoteHistory(address, timestamp=0):
 			way = 0 if tx["asset"]["votes"][0][0] == "-" else 1
 			result.insert(0, (slots.getRealTime(tx["timestamp"]), way, candidates[pkey]))
 		return result
+
 
 def getVoteForce(address, **kw):
 	delegate_pubk = kw.pop("delegate_pubk", "")
@@ -131,6 +137,7 @@ def getVoteForce(address, **kw):
 		sum_ += balance * (end - timestamp_limit)/3600
 
 	return sum_
+
 
 def getExVoters(delegate_pubk, **kw):
 	now = datetime.datetime.now(slots.UTC)

@@ -32,7 +32,7 @@ vote_sum = max(1, sum([float(d.get("vote", 0.)) for d in relays]))
 dist = dict([(r["address"], float(r.get("vote", 0.))/vote_sum) for r in relays])
 balance = wlt.balance
 
-for address,ratio in dist.items():
+for address, ratio in dist.items():
 	amount = (balance * ratio) - 0.1
 	if amount > 1.0:
 		wlt.sendArk(amount, address, vendorField="your custom message to voters here")

@@ -25,18 +25,20 @@ logging.basicConfig(
 	level     = logging.INFO,
 )
 
+
 def setInterval(interval):
 	""" threaded decorator
->>> @setInterval(10)
-... def tick(): print("Tick")
->>> stop = tick() # print 'Tick' every 10 sec
->>> type(stop)
-<class 'threading.Event'>
->>> stop.set() # stop printing 'Tick' every 10 sec
-"""
+	>> @setInterval(10)
+	... def tick(): print("Tick")
+	>> stop = tick() # print 'Tick' every 10 sec
+	>> type(stop)
+	<class 'threading.Event'>
+	>> stop.set() # stop printing 'Tick' every 10 sec
+	"""
 	def decorator(function):
 		def wrapper(*args, **kwargs):
 			stopped = threading.Event()
+
 			def loop(): # executed in another thread
 				while not stopped.wait(interval): # until stopped
 					function(*args, **kwargs)
@@ -47,6 +49,7 @@ def setInterval(interval):
 		return wrapper
 	return decorator
 
+
 def arkydify(dic):
 	result = ArkyDict()
 	for k,v in dic.items():
@@ -54,15 +57,18 @@ def arkydify(dic):
 		else: setattr(result, k, v)
 	return result
 
+
 class ArkyDict(dict):
 	"""
-Python dict with javascript behaviour.
->>> ad = ArkyDict()
->>> ad["key1"] = "value1"
->>> ad.key2 = "value2"
->>> sorted(ad.items(), key=lambda e:e[0])
-[('key1', 'value1'), ('key2', 'value2')]
-"""
+	Python dict with javascript behaviour.
+	>> ad = ArkyDict()
+	>> ad["key1"] = "value1"
+	>> ad.key2 = "value2"
+	>> sorted(ad.items(), key=lambda e:e[0])
+	[('key1', 'value1'), ('key2', 'value2')]
+	"""
 	def __setattr__(self, attr, value): return dict.__setitem__(self, attr, value)
+
 	def __getattr__(self, attr, default=False): return dict.get(self, attr, default)
+
 	def __delattr__(self, attr): return dict.__delitem__(self, attr)

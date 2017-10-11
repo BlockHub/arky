@@ -4,10 +4,61 @@
 import sys, imp, json, requests, traceback
 # from .. import setInterval
 
+
 def getTokenPrice(token, fiat="usd"):
-	cmc_ark = json.loads(requests.get("https://api.coinmarketcap.com/v1/ticker/"+token+"/?convert="+fiat.upper()).text)
-	try: return float(cmc_ark[0]["price_%s"%fiat.lower()])
-	except: return 1.
+    cmc_ark = json.loads(requests.get("https://api.coinmarketcap.com/v1/ticker/"+token+"/?convert="+fiat).text)
+    try:
+        return float(cmc_ark[0]["price_%s" % fiat])
+    except:
+        return 1
+
+
+def getArkFiatPrice(fiat):
+    """
+    Allow to get the current price of Ark in one of the major currency
+    :param fiat: The currency we wants to convert
+    :return: The price in the specified currency
+    """
+    fiats = ["usd", "eur", "chf", "aud", "gbp", "jpy"]
+    if fiat in fiats:
+        r = json.loads(requests.get("https://api.coinmarketcap.com/v1/ticker/ark/?convert=%s" % fiat).text)
+        return r[0]["price_%s" % fiat][0:7]
+    return 1
+
+
+def getArkPriceFromCryptoCompare(currency):
+    """
+    Allow to get the current price of Ark converted in any fiat or cryptocurrency existing on Cryptocompare.
+    Use like : getArkPriceFromCryptoCompare("usd") or getArkPriceFromCryptoCompare("dash")
+    """
+    base_url = "https://min-api.cryptocompare.com/data/price?fsym=ARK&tsyms=%s" % currency.upper()
+    fiats = ["usd", "eur", "chf", "aud", "gbp", "jpy"]
+    coins = getAllCoinsFromCryptoCompare()
+    if currency in fiats or currency.upper() in coins:
+        currency = currency.upper()
+        r = json.loads(requests.get(base_url).text)
+        return r[currency]
+    return 1
+
+
+def getAllCoinsFromCryptoCompare():
+    """
+    Retrieve of all of the coins acronyms on CryptoCompare
+    """
+    r = json.loads(requests.get("https://www.cryptocompare.com/api/data/coinlist/").text)
+    coins = []
+    for coin in r["Data"]:
+        coins.append(coin)
+    return coins
+
+
+def getArkPriceFromBittrex():
+    """
+    Get the last price of Ark on Bittrex. The showed price is in Bitcoin.
+    """
+    r = json.loads(requests.get("https://bittrex.com/api/v1.1/public/getmarketsummary?market=btc-ark").text)
+    return r["result"][0]["Last"]
+
 
 # def getTokenPrice(token, fiat="usd"):
 # 	cmc_ark = json.loads(requests.get("http://coinmarketcap.northpole.ro/api/v5/%s.json" % token).text)

@@ -138,6 +138,10 @@ Install requirements
 
 ``pip install -e .``
 
+or
+
+``pip install -r requirements.txt``
+
 Authors
 =======
 

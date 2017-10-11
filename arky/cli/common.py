@@ -20,16 +20,19 @@ TOKENS = os.path.normpath(os.path.join(ROOT, ".token"))
 try: os.makedirs(TOKENS)
 except: pass
 
+
 class BalanceMGMT(dict):
 	def reset(self):
 		for addr in self:
 			value = api.Account.getBalance(addr)
 			if value.success: self[addr] = int(value["balance"])
+
 	def register(self, address):
 		if address not in self:
 			value = api.Account.getBalance(address)
 			if value.success: self[address] = int(value["balance"])
 BALANCES = BalanceMGMT()
+
 
 def checkKeys(key1, key2, address):
 	if isinstance(key1, SigningKey):
@@ -55,10 +58,12 @@ def checkKeys(key1, key2, address):
 	sys.stdout.write("No account linked\n")
 	return False
 
+
 def checkFolderExists(filename):
 	folder = os.path.dirname(filename)
 	if not os.path.exists(folder):
 		os.makedirs(folder)
+
 
 def shortAddress(addr, sep="...", n=5):
 	return addr[:n]+sep+addr[-n:]
@@ -72,33 +77,38 @@ def shortAddress(addr, sep="...", n=5):
 # 	result = binascii.unhexlify(data)
 # 	return result if isinstance(result, bytes) else result.encode()
 
+
 def signingKey2Hex(signingKey):
 	return hexlify(signingKey.to_pem())
+
 
 def hex2SigningKey(hexa):
 	return SigningKey.from_pem(unhexlify(hexa))
 
-def prettyfy(dic, tab="    "):
+
+def prettify(dic, tab="    "):
 	result = ""
 	if len(dic):
 		maxlen = max([len(e) for e in dic.keys()])
-		for k,v in dic.items():
+		for k, v in dic.items():
 			if isinstance(v, dict):
 				result += tab + "%s:" % k.ljust(maxlen)
-				result += prettyfy(v, tab*2)
+				result += prettify(v, tab*2)
 			else:
 				result += tab + "%s: %s" % (k.rjust(maxlen),v)
 			result += "\n"
 		return result
 
+
 def prettyPrint(dic, tab="    ", log=False):
-	pretty = prettyfy(dic, tab)
+	pretty = prettify(dic, tab)
 	if len(dic):
 		sys.stdout.write(pretty)
 		if log: logging.info("\n"+pretty.rstrip())
 	else:
 		sys.stdout.write("Nothing to print here\n")
 		if log: logging.info("Nothing to log here")
+
 
 def floatAmount(amount, address):
 	if amount.endswith("%"):
@@ -107,7 +117,7 @@ def floatAmount(amount, address):
 		else:
 			return False
 	elif amount[0] in ["$", "€", "£", "¥"]:
-		price = util.getTokenPrice(cfg.__TOKEN__, {"$":"usd", "EUR":"eur", "€":"eur", "£":"gbp", "¥":"cny"}[amount[0]])
+		price = util.getTokenPrice(cfg.__TOKEN__, {"$": "usd", "EUR": "eur", "€": "eur", "£": "gbp", "¥": "cny"}[amount[0]])
 		result = float(amount[1:])/price
 		if askYesOrNo(u"%s=%s%f (%s/%s=%f) - Validate ?" % (amount, cfg.__TOKEN__, result, cfg.__TOKEN__, amount[0], price)):
 			return result
@@ -116,11 +126,13 @@ def floatAmount(amount, address):
 	else:
 		return float(amount)
 
+
 def findNetworks():
 	try:
 		return [os.path.splitext(name)[0] for name in os.listdir(ROOT) if name.endswith(".net")]
 	except:
 		return []
+
 
 def findTokens(ext="tok"):
 	try:
@@ -128,11 +140,13 @@ def findTokens(ext="tok"):
 	except:
 		return []
 
+
 def findColdTx(ext="ctx"):
 	try:
 		return [os.path.splitext(name)[0] for name in os.listdir(os.path.join(COLDTXS, cfg.__NET__)) if name.endswith("."+ext)]
 	except:
 		return []
+
 
 def chooseItem(msg, *elem):
 	n = len(elem)
@@ -152,6 +166,7 @@ def chooseItem(msg, *elem):
 		sys.stdout.write("Nothing to choose...\n")
 		return False
 
+
 def askYesOrNo(msg):
 	if not EXECUTEMODE:
 		answer = ""
@@ -161,10 +176,12 @@ def askYesOrNo(msg):
 	else:
 		return True
 
+
 def coldTxPath(name):
 	name = name.decode() if isinstance(name, bytes) else name
 	if not name.endswith(".ctx"): name += ".ctx"
 	return os.path.join(COLDTXS, cfg.__NET__, name)
+
 
 def generateColdTx(signingKey, publicKey, secondSigningKey=None, **kw):
 	tx = core.Transaction(**kw)
@@ -174,6 +191,7 @@ def generateColdTx(signingKey, publicKey, secondSigningKey=None, **kw):
 	tx.sign()
 	return tx.serialize()
 
+
 def dropColdTx(tx, name=None):
 	filename = coldTxPath(tx.id if name == None else name)
 	checkFolderExists(filename)
@@ -181,6 +199,7 @@ def dropColdTx(tx, name=None):
 	json.dump(tx, out, indent=2)
 	out.close()
 	return os.path.basename(filename)
+
 
 def loadColdTx(name):
 	filename = coldTxPath(name)
@@ -190,6 +209,7 @@ def loadColdTx(name):
 		in_.close()
 		return tx
 
+
 def reprColdTx(ctx):
 	return "<type-%(type)d transaction(A%(amount).8f) from %(from)s to %(to)s>" % {
 		"type": ctx["type"],
@@ -198,11 +218,13 @@ def reprColdTx(ctx):
 		"to": shortAddress(ctx.get("recipientId", "No one"))
 	}
 
+
 def tokenPath(name, token="tok"):
 	ext = "."+token
 	name = name.decode() if isinstance(name, bytes) else name
 	if not name.endswith(ext): name += ext
 	return os.path.join(TOKENS, cfg.__NET__, name)
+
 
 def dropToken(filename, address, publicKey, signingKey):
 	if not api.Account.getAccount(address, returnKey="account").get('secondPublicKey', False):
@@ -211,6 +233,7 @@ def dropToken(filename, address, publicKey, signingKey):
 	out = io.open(filename, "w")
 	out.write("%s%s%s" % (address, hexlify(publicKey), signingKey2Hex(signingKey)))
 	out.close()
+
 
 def loadToken(filename):
 	in_ = io.open(filename, "r")

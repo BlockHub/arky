@@ -1,28 +1,28 @@
 # -*- encoding: utf8 -*-
 # © Toons
 
-'''
+"""
 Usage: escrow register <2ndPublicKey>
-       escrow link [<secret> -e]
-       escrow send <amount> <address> [<message>]
-       escrow validate [<id>]
-       escrow save <name>
-       escrow unlink
+		escrow link [<secret> -e]
+		escrow send <amount> <address> [<message>]
+		escrow validate [<id>]
+		escrow save <name>
+		escrow unlink
 
 Options:
 -e --escrow  tag to link account as escrower
 
 Subcommands:
-    register  : set second signature using escrow public key.
-    link      : link to delegate using secret passphrases. If secret passphrases
-                contains spaces, it must be enclosed within double quotes
-                ("secret with spaces"). If no secret given, it tries to link
-                with saved escrow(s).
-    send      : create cold transaction to send ARK if validated.
-    validate  : broadcast cold transactions.
-    save      : save linked escrow to a *.tok1 or *.tok2 file.
-    unlink    : unlink from escrow.
-'''
+	register  : set second signature using escrow public key.
+	link      : link to delegate using secret passphrases. If secret passphrases
+				contains spaces, it must be enclosed within double quotes
+				("secret with spaces"). If no secret given, it tries to link
+				with saved escrow(s).
+	send      : create cold transaction to send ARK if validated.
+	validate  : broadcast cold transactions.
+	save      : save linked escrow to a *.tok1 or *.tok2 file.
+	unlink    : unlink from escrow.
+"""
 
 from .. import ArkyDict, ROOT, core, api, cfg
 from . import common
@@ -34,6 +34,7 @@ PUBLICKEY = None
 KEY1 = None
 KEY2 = None
 
+
 def register(param):
 	if _checkKey1():
 		tx = common.generateColdTx(KEY1, PUBLICKEY, type=1, recipientId=ADDRESS, asset=ArkyDict(signature=ArkyDict(publicKey=param["<2ndPublicKey>"])))
@@ -42,6 +43,7 @@ def register(param):
 			common.prettyPrint(api.broadcastSerial(tx), log=True)
 		else:
 			sys.stdout.write("Broadcast canceled\n")
+
 
 def link(param):
 	global KEY1, KEY2, PUBLICKEY, ADDRESS
@@ -76,6 +78,7 @@ def link(param):
 	if ADDRESS:
 		common.BALANCES.register(ADDRESS)
 
+
 def send(param):
 	if _checkKey1():
 		amount = common.floatAmount(param["<amount>"], ADDRESS)*100000000
@@ -87,6 +90,7 @@ def send(param):
 		if tx:
 			tx.address = ADDRESS
 			sys.stdout.write("You can now give %s file to your escrow\n" % common.dropColdTx(tx))
+
 
 def validate(param):
 	if KEY2:
@@ -114,9 +118,11 @@ def validate(param):
 		else:
 			sys.stdout.write("Cold transaction not found\n")
 
+
 def save(param):
 	if KEY1 and PUBLICKEY and ADDRESS: common.dropToken(common.tokenPath(param["<name>"], "tok1"), ADDRESS, PUBLICKEY, KEY1)
 	elif KEY2: _drop2ndToken(common.tokenPath(param["<name>"], "tok2"), KEY2)
+
 
 def unlink(param):
 	global KEY1, KEY2, PUBLICKEY, ADDRESS
@@ -133,17 +139,20 @@ def _whereami():
 		return "escrow[%s]" % (common.shortAddress(k2))
 	else: return "escrow"
 
+
 def _checkKey1():
 	if not KEY1:
 		sys.stdout.write("No account linked\n")
 		return False
 	return True
 
+
 def _drop2ndToken(filename, signingKey):
 	common.checkFolderExists(filename)
 	out = io.open(filename, "w")
 	out.write(common.signingKey2Hex(signingKey))
 	out.close()
+
 
 def _load2ndToken(filename):
 	in_ = io.open(filename, "r")

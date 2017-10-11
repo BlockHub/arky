@@ -68,29 +68,29 @@ if len(tx):
 		for item in summary.items():
 			log.write("%s: %s\n" % item)
 
-		header +=  ["donator number", "Total ARK received",               ""]
+		header += ["donator number", "Total ARK received",               ""]
 		content += [len(summary),     total_received/100000000., ""]
 
 		if share >= summary[recipientId]:
 			wlt.sendArk(share/100000000., recipientId, vendorField="from arky delegate: You are the lucky donator of the week !")
-			header +=  ["Lucky one", "ARK given"]
+			header += ["Lucky one", "ARK given"]
 			content += [recipientId, share/100000000.]
 			log.write("%s ARK given to lucky donator %s\n" % (share/100000000., recipientId))
 		else:
-			header +=  ["Lucky one"]
+			header += ["Lucky one"]
 			content += ["None"]
 			log.write("No lucky donator found this week\n")
 			for recipientId, share in summary.items():
 				wlt.sendArk(share/100000000., recipientId, vendorField="from arky delegate: No lucky donator found this week")
 				pass
 	else:
-		header +=  ["donator number", "Total ARK received"]
+		header += ["donator number", "Total ARK received"]
 		content += [0, 0]
 		log.write("No donator this week\n")
 
 out = open("lucky.csv", "a")
-out.write(";".join(["%s"%e for e in header])  + "\n")
-out.write(";".join(["%s"%e for e in content]) + "\n")
+out.write(";".join(["%s" % e for e in header]) + "\n")
+out.write(";".join(["%s" % e for e in content]) + "\n")
 out.close()
 
 wallet.mgmt.join()

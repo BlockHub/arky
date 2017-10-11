@@ -1,16 +1,16 @@
 # -*- encoding: utf8 -*-
 # © Toons
 
-'''
+"""
 Usage: network use [<name> -b <number> -s <seed> -l <ms>]
-       network browse [<element>]
-       network publickey <secret>
-       network address <secret>
-       network wif <secret>
-       network delegates
-       network staking
-       network update
-       network ping
+	   network browse [<element>]
+	   network publickey <secret>
+	   network address <secret>
+	   network wif <secret>
+	   network delegates
+	   network staking
+	   network update
+	   network ping
 
 Options:
 -b <number> --broadcast <number> peer number to use for broadcast       [default: 10]
@@ -18,23 +18,25 @@ Options:
 -l <ms> --latency <ms>           maximum latency allowed in miliseconds [default: 1000]
 
 Subcommands:
-    use       : select network.
-    browse    : browse network.
-    publickey : returns public key from secret.
-    address   : returns address from secret.
-    delegates : show delegate list.
-    staking   : show coin-supply ratio used on delegate voting.
-    update    : update balance of all linked account.
-    ping      : print selected peer latency.
-'''
+	use       : select network.
+	browse    : browse network.
+	publickey : returns public key from secret.
+	address   : returns address from secret.
+	delegates : show delegate list.
+	staking   : show coin-supply ratio used on delegate voting.
+	update    : update balance of all linked account.
+	ping      : print selected peer latency.
+"""
 
 from .. import cfg, api, core
 from . import common
 
 import sys, hashlib, webbrowser
 
+
 def _whereami():
 	return "network"
+
 
 def use(param):
 	if not param["<name>"]:
@@ -51,11 +53,13 @@ def use(param):
 		latency=float(param.get("--latency"))/1000
 	)
 
+
 def ping(param):
 	common.prettyPrint(dict(
 		[[peer,api.checkPeerLatency(peer)] for peer in api.PEERS] +\
 		[["api>"+seed,api.checkPeerLatency(seed)] for seed in api.SEEDS]
 	))
+
 
 def browse(param):
 	element = param["<element>"]
@@ -69,14 +73,18 @@ def browse(param):
 	else:
 		webbrowser.open(cfg.__EXPLORER__)
 
+
 def address(param):
 	sys.stdout.write("    %s\n" % core.getAddress(core.getKeys(param["<secret>"].encode("ascii"))))
+
 
 def publickey(param):
 	sys.stdout.write("    %s\n" % common.hexlify(core.getKeys(param["<secret>"].encode("ascii")).public))
 
+
 def wif(param):
 	sys.stdout.write("    %s\n" % core.getWIF(hashlib.sha256(param["<secret>"].encode("ascii")).digest(), cfg.__NETWORK__))
+
 
 def delegates(param):
 	delegates = api.Delegate.getDelegates(limit=51, returnKey='delegates')
@@ -86,9 +94,11 @@ def delegates(param):
 		sys.stdout.write("    #%02d - %s: %.3f\n" % (i, name.ljust(maxlen), vote))
 		i += 1
 
+
 def update(param):
 	common.BALANCES.reset()
 	common.prettyPrint(common.BALANCES)
 	
+
 def staking(param):
 	sys.stdout.write("    %.2f%% of coin supply used to vote for delegates\n" % sum(d["approval"] for d in api.Delegate.getCandidates()))

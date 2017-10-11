@@ -16,8 +16,10 @@ Available commands: %(sets)s""" % {"python":sys.version.split()[0], "arky":__ver
 
 input = raw_input if not __PY3__ else input
 
+
 def _whereami():
 	return ""
+
 
 class _Prompt(object):
 
@@ -33,6 +35,7 @@ class _Prompt(object):
 
 PROMPT = _Prompt()
 PROMPT.module = sys.modules[__name__]
+
 
 def parse(argv):
 	if argv[0] in __all__:
@@ -63,6 +66,7 @@ def parse(argv):
 
 	return True, False
 
+
 def start():
 	sys.stdout.write(__doc__+"\n")
 	exit = False
@@ -86,6 +90,7 @@ def start():
 						sys.stdout.write("".join(traceback.format_tb(error.__traceback__)).rstrip() + "\n")
 					sys.stdout.write("%s\n" % error)
 
+
 def execute(*lines):
 	common.EXECUTEMODE = True
 
@@ -107,6 +112,7 @@ def execute(*lines):
 					sys.stdout.write("%s\n" % error)
 
 	common.EXECUTEMODE = False
+
 
 def launch(script):
 	if os.path.exists(script):

@@ -1,0 +1,11 @@
+-e git+https://github.com/Highjhacker/arky.git@dbf00ae03ef47ebd57bc7e034fce52b32e46bf16#egg=Arky
+base58==0.2.5
+certifi==2017.7.27.1
+chardet==3.0.4
+docopt==0.6.2
+ecdsa==0.13
+idna==2.6
+pytz==2017.2
+requests==2.18.4
+urllib3==1.22
+yawTtk==1.0.5

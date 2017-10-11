@@ -1,7 +1,7 @@
 # -*- encoding: utf8 -*-
 # © Toons
 
-from arky.util import stats, getArkPrice
+from arky.util import stats, getArkFiatPrice
 from arky import cfg, api, slots, wallet, HOME
 import os, json, math, datetime
 
@@ -11,9 +11,9 @@ print(sys.version)
 while cfg.__NET__ != "ark":
 	api.use("ark")
 
-__daily_fees__ =  5./30 # daily server cost
+__daily_fees__ = 5./30  # daily server cost
 __investments__ = "AUahWfkfr5J4tYakugRbfow7RWVTK35GPW"
-__exchange__ =    "APREAB1cyRLGRrTBs97BEXNv1AwAPpSQkJ"
+__exchange__ = "APREAB1cyRLGRrTBs97BEXNv1AwAPpSQkJ"
 __tx_fee__ = cfg.__FEES__["send"]/100000000.
 
 # screen command line
@@ -24,8 +24,12 @@ parser.add_option("-s", "--secret", dest="secret", help="wallet secret you want 
 parser.add_option("-k", "--keyring", dest="keyring", help="wallet file you want to use")
 (options, args) = parser.parse_args()
 
-def ARK2USD(value): return value * getArkPrice("usd")
-def USD2ARK(value): return value / getArkPrice("usd")
+
+def ARK2USD(value): return value * float(getArkFiatPrice("usd"))
+
+
+def USD2ARK(value): return value / float(getArkFiatPrice("usd"))
+
 
 if len(args) == 1 and os.path.exists(args[0]):
 	in_ = open(args[0])
@@ -61,7 +65,7 @@ elif wlt.balance < 200:
 sys.stdout.write("Checking %s-day-true-vote-weight on transaction history...\n" % 7)
 contributors = dict([address, stats.getVoteForce(address, 7)] for address in [v["address"] for v in wlt.voters if v["address"] not in [__investments__, "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE"]])
 k = 1.0/max(1, sum(contributors.values()))
-contributors = dict((a, s*k) for a,s in contributors.items())
+contributors = dict((a, s*k) for a, s in contributors.items())
 
 # # contributors = _getTrueVoteWeight([v["address"] for v in wlt.voters], delay=7)
 amount = wlt.balance
@@ -80,19 +84,19 @@ wlt.sendArk(node_invest, __exchange__)
 share = amount - node_invest
 log.write("Share           : A%.8f\n" % share)
 
-investments = 0.20*share - __tx_fee__
+investments = 0.20 * share - __tx_fee__
 log.write("For investments : A%.8f\n" % investments)
 header.append("Investments")
 content.append(investments)
 wlt.sendArk(investments, __investments__)
 
-voters = 0.80*share
+voters = 0.80 * share
 log.write("For voters      : A%.8f\n" % voters)
 
 log.write("\nArky contributors : [checksum:%f]\n" % sum(contributors.values()))
 header.append("")
 content.append("")
-for addr,ratio in sorted(contributors.items(), key=lambda i:i[1]):
+for addr, ratio in sorted(contributors.items(), key=lambda i: i[1]):
 	amount = voters*ratio - __tx_fee__
 	if amount > 0.:
 		wlt.sendArk(amount, addr, vendorField="Arky weekly interests. Thanks for your contribution !")
@@ -105,8 +109,8 @@ for addr,ratio in sorted(contributors.items(), key=lambda i:i[1]):
 		content.append("-")
 
 out = open("accounting.csv", "a")
-out.write(";".join(["%s"%e for e in header])  + "\n")
-out.write(";".join(["%s"%e for e in content]) + "\n")
+out.write(";".join(["%s" % e for e in header]) + "\n")
+out.write(";".join(["%s" % e for e in content]) + "\n")
 out.close()
 
 wallet.mgmt.join()

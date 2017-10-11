@@ -10,9 +10,14 @@ else:
 
 import io, json, socket, hashlib, binascii, logging, threading
 
-# define wallet exceptions 
+
+# define wallet exceptions
 class ReadOnlyAttributes(Exception): pass
+
+
 class SecondSignatureError(Exception): pass
+
+
 class MultiSignatureError(Exception): pass
 
 
@@ -38,35 +43,35 @@ def open(filename):
 
 
 class Wallet(object):
-	r'''
-Wallet object allows user to send all type of transaction granted by the Ark blockchain.
+	"""
+	Wallet object allows user to send all type of transaction granted by the Ark blockchain.
 
-Attributes that can be set using object interface :
-secret       (str) -- a valid utf-8 encoded string
-secondSecret (str) -- a valid utf-8 encoded string
+	Attributes that can be set using object interface :
+	secret       (str) -- a valid utf-8 encoded string
+	secondSecret (str) -- a valid utf-8 encoded string
 
->>> from arky import wallet
->>> w = wallet.Wallet("secret")
->>> w.address
-'a3T1iRdHFt35bKY8RX1bZBGbenmmKZ12yR'
->>> w.wif
-'cP3giX8Vmcev97Y5BvMH1kPteesGk3AQ9vd9ifyis5r5sFiV8H26'
->>> w.publicKey
-'03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933'
->>> w.delegates[1]
-{'vote': '254644554598363', 'missedblocks': 17, 'productivity': 98.23, 'rate': 2, 'addres\
-s': 'AMLLuYLAfM4VWzzFxE8P5gFnof8JDpSgrm', 'approval': 2.04, 'username': 'arky', 'publicKe\
-y': '0211fe5bf889735fb982bb04ffeed0e7a46f781201d8bba5bc2daed6411a6b8348', 'producedblocks\
-': 942}
->>> w.sendArk(1.5, 'aPzezL8FFR3gnJC3hyJ6V1eFeFRNUzsS4y', "A1.5 for you using arky API")
->>> w.registerAsDelegate("secret_delegate")
->>> w.voteDelegate(up=["arky", "ravelou"])
->>> w.votes
-['ravelou', 'arky']
->>> w.voteDelegate(down=["arky"])
->>> w.votes
-['ravelou']
-'''
+	>> from arky import wallet
+	>> w = wallet.Wallet("secret")
+	>> w.address
+	'a3T1iRdHFt35bKY8RX1bZBGbenmmKZ12yR'
+	>> w.wif
+	'cP3giX8Vmcev97Y5BvMH1kPteesGk3AQ9vd9ifyis5r5sFiV8H26'
+	>> w.publicKey
+	'03a02b9d5fdd1307c2ee4652ba54d492d1fd11a7d1bb3f3a44c4a05e79f19de933'
+	>> w.delegates[1]
+	{'vote': '254644554598363', 'missedblocks': 17, 'productivity': 98.23, 'rate': 2, 'addres\
+	s': 'AMLLuYLAfM4VWzzFxE8P5gFnof8JDpSgrm', 'approval': 2.04, 'username': 'arky', 'publicKe\
+	y': '0211fe5bf889735fb982bb04ffeed0e7a46f781201d8bba5bc2daed6411a6b8348', 'producedblocks\
+	': 942}
+	>> w.sendArk(1.5, 'aPzezL8FFR3gnJC3hyJ6V1eFeFRNUzsS4y', "A1.5 for you using arky API")
+	>> w.registerAsDelegate("secret_delegate")
+	>> w.voteDelegate(up=["arky", "ravelou"])
+	>> w.votes
+	['ravelou', 'arky']
+	>> w.voteDelegate(down=["arky"])
+	>> w.votes
+	['ravelou']
+	"""
 
 	# list of all registered delegates
 	delegates = []
@@ -96,6 +101,7 @@ y': '0211fe5bf889735fb982bb04ffeed0e7a46f781201d8bba5bc2daed6411a6b8348', 'produ
 			object.__setattr__(self, "publicKey", public_key.decode() if isinstance(public_key, bytes) else public_key)
 			object.__setattr__(self, "K1", keys)
 			self.update()
+
 			@setInterval(20)
 			def _check(obj): obj.update()
 			self._stop_check_daemon = _check(self)
@@ -136,8 +142,8 @@ y': '0211fe5bf889735fb982bb04ffeed0e7a46f781201d8bba5bc2daed6411a6b8348', 'produ
 
 	def _generate_tx(self, **kw):
 		"""
-Generate a transaction with wallet key(s)
-"""
+		Generate a transaction with wallet key(s)
+		"""
 		tx = core.Transaction(**kw)
 		object.__setattr__(tx, "key_one", self.K1)
 		object.__setattr__(tx, "address", core.getAddress(self.K1))
@@ -147,27 +153,27 @@ Generate a transaction with wallet key(s)
 
 	def sendArk(self, amount, recipientId, vendorField=None):
 		"""
-Send ARK amount to recipientId.
+		Send ARK amount to recipientId.
 
-Argument:
-amount      (float) -- amount you want to send in ARK (not in SATOSHI !)
-recipientId (str) -- valid ARK address you want to send to
-vendorField (str) -- 64-char-max message you want to send with (None by default)
-"""
+		Argument:
+		amount      (float) -- amount you want to send in ARK (not in SATOSHI !)
+		recipientId (str) -- valid ARK address you want to send to
+		vendorField (str) -- 64-char-max message you want to send with (None by default)
+		"""
 		mgmt.push(self._generate_tx(type=0, amount=int(amount*100000000.), recipientId=recipientId, vendorField=vendorField))
 
 	def voteDelegate(self, up=[], down=[]):
 		"""
-Up or down vote for delegates. Delegates name are listed in `wallet.candidates` attribute.
-Automatically filters usernames that are already voted up/down ore are invalid.
+		Up or down vote for delegates. Delegates name are listed in `wallet.candidates` attribute.
+		Automatically filters usernames that are already voted up/down ore are invalid.
 
-Argument:
-up   (list) -- list of username to be upvoted
-down (list) -- list of username to be downvoted
-"""
+		Argument:
+		up   (list) -- list of username to be upvoted
+		down (list) -- list of username to be downvoted
+		"""
 		votes = self.votes
 		# first filter
-		up   = [u for u in up if u not in votes and u in Wallet.candidates]
+		up = [u for u in up if u not in votes and u in Wallet.candidates]
 		down = [u for u in down if u in votes]
 		#second filter
 		up = [d1['publicKey'] for d1 in [d0 for d0 in Wallet.delegates if d0['username'] in up]]
@@ -182,11 +188,11 @@ down (list) -- list of username to be downvoted
 
 	def registerAsDelegate(self, username):
 		"""
-Register wallet as a delegate (this enables forging).
+		Register wallet as a delegate (this enables forging).
 
-Arguments:
-username (str) -- a utf-8 valid username
-"""
+		Arguments:
+		username (str) -- a utf-8 valid username
+		"""
 		if not self.delegate:
 			mgmt.push(self._generate_tx(type=2, asset=ArkyDict(delegate=ArkyDict(username=username, publicKey=self.publicKey))))
 		else:
@@ -194,18 +200,19 @@ username (str) -- a utf-8 valid username
 
 	def registerSecondSignature(self, secondSecret):
 		"""
-Register a second signature. This is permanent and the two secrets have to be given to
-open the wallet. When second signature is registered on blockchain side, it automatically
-register the second key into the wallet.
+		Register a second signature. This is permanent and the two secrets have to be given to
+		open the wallet. When second signature is registered on blockchain side, it automatically
+		register the second key into the wallet.
 
-Argument:
-secondSecret (str) -- a valid utf-8 encoded string
-"""
+		Argument:
+		secondSecret (str) -- a valid utf-8 encoded string
+		"""
 		if not self.account.get('secondSignature'):
 			newPublicKey = binascii.hexlify(core.getKeys(secondSecret).public)
 			newPublicKey = newPublicKey.decode() if isinstance(newPublicKey, bytes) else newPublicKey
 			mgmt.push(self._generate_tx(type=1, asset=ArkyDict(signature=ArkyDict(publicKey=newPublicKey))))
 			# automaticaly set secondSignature when transaction is applied
+
 			@setInterval(10)
 			def _setter(obj, passphrase):
 				if obj.account.get('secondSignature', False):

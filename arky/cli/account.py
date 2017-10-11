@@ -4,7 +4,7 @@
 # -p <pkeys> --public-keys <pkeys> 64-char message
 #        account send <amount> <address> [-p <pkeys> <message>]
 
-'''
+"""
 Usage: account link [<secret> <2ndSecret>]
        account save <name>
        account unlink
@@ -31,7 +31,7 @@ Subcommands:
                register second signature to linked account (cost 5 ARK).
     vote     : up or down vote delegate.
     send     : send ARK amount to address. You can set a 64-char message.
-'''
+"""
 
 from .. import cfg, api, core, ROOT, ArkyDict
 from . import common
@@ -42,6 +42,7 @@ ADDRESS = None
 PUBLICKEY = None
 KEY1 = None
 KEY2 = None
+
 
 def link(param):
 	global ADDRESS, PUBLICKEY, KEY1, KEY2
@@ -68,18 +69,22 @@ def link(param):
 	if ADDRESS:
 		common.BALANCES.register(ADDRESS)
 
+
 def save(param):
 	if KEY1 and PUBLICKEY and ADDRESS:
 		common.dropToken(common.tokenPath(param["<name>"], "tok"), ADDRESS, PUBLICKEY, KEY1)
+
 
 def unlink(param):
 	global ADDRESS, PUBLICKEY, KEY1, KEY2
 	common.BALANCES.pop(ADDRESS, None)
 	ADDRESS, PUBLICKEY, KEY1, KEY2 = None, None, None, None
 
+
 def status(param):
 	if ADDRESS:
 		common.prettyPrint(api.Account.getAccount(ADDRESS, returnKey="account"))
+
 
 def register(param):
 	global ADDRESS, PUBLICKEY, KEY1, KEY2
@@ -104,6 +109,7 @@ def register(param):
 			common.prettyPrint(api.broadcastSerial(tx), log=True)
 		else:
 			sys.stdout.write("Broadcast canceled\n")
+
 
 def vote(param):
 	global ADDRESS, PUBLICKEY, KEY1, KEY2
@@ -130,6 +136,7 @@ def vote(param):
 		elif len(candidates):
 			common.prettyPrint(candidates[0])
 
+
 def send(param):
 	global ADDRESS, PUBLICKEY, KEY1, KEY2
 
@@ -146,6 +153,7 @@ def send(param):
 				sys.stdout.write("Broadcast canceled\n")
 		else:
 			sys.stdout.write("No transaction defined\n")
+
 
 # --------------
 def _whereami():

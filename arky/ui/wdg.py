@@ -6,6 +6,7 @@ from .. import __PY3__, setInterval, ArkyDict, ROOT, cfg, api, core, util, cli, 
 import os, sys, yawTtk, json, webbrowser
 import yawTtk.dialog as Dialog
 
+
 class DataView(yawTtk.Tree):
 
 	rows = []
@@ -20,8 +21,8 @@ class DataView(yawTtk.Tree):
 
 	def configureHeader(self):
 		self.__data_headings = DataView.headers if len(DataView.headers) else \
-		                       list(rows[0].keys()) if len(DataView.rows) else \
-		                       []
+							   list(rows[0].keys()) if len(DataView.rows) else \
+							   []
 		self['columns'] = " ".join(["{%s}"%h for h in self.__data_headings])
 		for i in range(len(self.__data_headings)):
 			text = self.__data_headings[i]
@@ -86,6 +87,7 @@ class AddressPanel(yawTtk.Frame):
 		self.label.bind("<Button-1>", lambda e:webbrowser.open(cfg.__EXPLORER__+"/address/"+AddressPanel.status.get("account", {}).get("address", "")))
 
 		self.update()
+
 		@setInterval(10)
 		def _update(obj): obj.update()
 		self.__stop_update = _update(self)
@@ -101,24 +103,24 @@ class AddressPanel(yawTtk.Frame):
 				search = [c for c in AddressPanel.candidates if AddressPanel.status["account"]["publicKey"] == c["publicKey"]]
 				if len(search):
 					self.label.configure(
-						image = self._shield,
-						background = "lightgreen" if search[0]["rate"] <= 51 else "yellow3",
-						compound = "left",
-						text = "#%(rate)s - %(username)s" % search[0]
+						image=self._shield,
+						background="lightgreen" if search[0]["rate"] <= 51 else "yellow3",
+						compound="left",
+						text="#%(rate)s - %(username)s" % search[0]
 					)
 				else:
 					self.label.configure(
-						image = self._bank,
-						background = "steelblue",
-						compound = "image"
+						image=self._bank,
+						background="steelblue",
+						compound="image"
 					)
 			else:
 				sys.stdout.write("Account does not exists")
 				self.balance.set("%s %.8f" % (cfg.__SYMBOL__, 0.))
 				self.label.configure(
-					image = self._cloud,
-					background = self["background"], #"SystemButtonFace",
-					compound = "image"
+					image=self._cloud,
+					background=self["background"], #"SystemButtonFace",
+					compound="image"
 				)
 		else:
 			self.balance.set("%s %.8f" % (cfg.__SYMBOL__, 0.))
@@ -126,9 +128,9 @@ class AddressPanel(yawTtk.Frame):
 			AddressPanel.status = {}
 			AddressPanel.vote = []
 			self.label.configure(
-				image = self._cloud,
-				background = self["background"], #"SystemButtonFace",
-				compound = "image"
+				image=self._cloud,
+				background=self["background"], #"SystemButtonFace",
+				compound="image"
 			)
 
 	def destroy(self):
@@ -366,13 +368,13 @@ class KeyDialog(Dialog.BaseDialog):
 
 	def fillButton(self):
 		yawTtk.Button(self.buttonframe, font=("tahoma", 8, "bold"), image=Dialog.cross16, compound="image",
-		              background=self.background, style="Dialog.TButton", text="Cancel", width=-1,
-		              command=self.destroy).pack(side="right")
+					  background=self.background, style="Dialog.TButton", text="Cancel", width=-1,
+					  command=self.destroy).pack(side="right")
 		yawTtk.Button(self.buttonframe, font=("tahoma", 8, "bold"), image=Dialog.tick16, compound="left",
-		              background=self.background, style="Dialog.TButton", default="active", text="Sign transaction", width=-1,
-		              command=self.link).pack(side="right", padx=self.border)
+					  background=self.background, style="Dialog.TButton", default="active", text="Sign transaction", width=-1,
+					  command=self.link).pack(side="right", padx=self.border)
 		b = yawTtk.Button(self.buttonframe, image=Dialog.stop16, compound="left", text="Show",
-		                  background=self.background, style="Dialog.Toolbutton", padding=(self.border, 0))
+						  background=self.background, style="Dialog.Toolbutton", padding=(self.border, 0))
 		b.pack(side="left", fill="y")
 		b.bind("<ButtonPress>", lambda e,o=self: [o.secret.configure(show=""), o.secondsecret.configure(show="")])
 		b.bind("<ButtonRelease>", lambda e,o=self: [o.secret.configure(show="-"), o.secondsecret.configure(show="-")])
@@ -385,7 +387,7 @@ class KeyDialog(Dialog.BaseDialog):
 
 	def link(self):
 		self.destroy()
-		if KeyDialog.passphrase1 == None:
+		if KeyDialog.passphrase1 is None:
 			sys.stdout.write("No passphrase given")
 		elif core.getAddress(core.getKeys(KeyDialog.passphrase1)) == AddressPanel.address:
 			KeyDialog.check = True
@@ -419,6 +421,7 @@ class LogPanel(yawTtk.Frame):
 		scrollx.grid(row=1, column=0, sticky="ew")
 
 		self.menu = yawTtk.Menu(self, tearoff=False)
+
 		def check_menu():
 			value = "disabled" if len(self.listbox.get(0,"end")) <= 0 else "normal"
 			self.menu.entryconfigure(0, state=value)
