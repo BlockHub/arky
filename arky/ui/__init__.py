@@ -32,7 +32,7 @@ class Glob:
 	sendpanel = None
 	votepannel = None
 	rootfolder = ""
-	history = {"version":0}
+	history = {"version": 0}
 
 	@staticmethod
 	def main_is_frozen():
@@ -166,14 +166,14 @@ def launch():
 			walletmenu.entryconfigure(0, state="normal")
 			walletmenu.entryconfigure(1, state="normal")
 	walletmenu["postcommand"] = check_wm
-	walletmenu.add("cascade", ulabel=u"_Send", command=lambda m=toplevel:showSendPanel(m))
-	walletmenu.add("cascade", ulabel=u"_Vote", command=lambda m=toplevel:showVotePanel(m))
+	walletmenu.add("cascade", ulabel=u"_Send", command=lambda m=toplevel: showSendPanel(m))
+	walletmenu.add("cascade", ulabel=u"_Vote", command=lambda m=toplevel: showVotePanel(m))
 	walletmenu.add("separator")
 	walletmenu.add("command", compound="left", image=_exit, ulabel="_Close", command=sys.exit)
 
 	networkmenu = yawTtk.Menu(menubar, tearoff=False, name="networkmenu")
 	for net in cli.common.findNetworks():
-		networkmenu.add("radiobutton", variable="ui.network", label=net, value=net, command=lambda n=net:networkUse(n))
+		networkmenu.add("radiobutton", variable="ui.network", label=net, value=net, command=lambda n=net: networkUse(n))
 
 	menubar.add("cascade", ulabel="_Wallet", menu=walletmenu)
 	menubar.add("cascade", ulabel="_Network", menu=networkmenu)
@@ -205,7 +205,7 @@ def launch():
 		except: pass
 	toplevel.geometry("800x500+0+0")
 	toplevel.minsize(800, int(800/1.618033989))
-	toplevel.bind("<Escape>", lambda event:hidePanels())
+	toplevel.bind("<Escape>", lambda event: hidePanels())
 	toplevel.protocol('WM_DELETE_WINDOW', exit)
 	toplevel.configure(menu=menubar)
 	wdg.Dialog.center(toplevel, True)

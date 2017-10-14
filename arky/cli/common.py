@@ -93,7 +93,7 @@ def prettify(dic, tab="    "):
 		for k, v in dic.items():
 			if isinstance(v, dict):
 				result += tab + "%s:" % k.ljust(maxlen)
-				result += prettify(v, tab*2)
+				result += prettify(v, tab * 2)
 			else:
 				result += tab + "%s: %s" % (k.rjust(maxlen),v)
 			result += "\n"

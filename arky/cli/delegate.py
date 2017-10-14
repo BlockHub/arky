@@ -134,7 +134,7 @@ def share(param):
 			if param["--lowest"]: minimum = float(param["--lowest"]) + cfg.__FEES__["send"]/100000000.
 			else: minimum = cfg.__FEES__["send"]/100000000.
 
-			if param["--highest"] : maximum = float(param["--highest"]) + cfg.__FEES__["send"]/100000000.
+			if param["--highest"]: maximum = float(param["--highest"]) + cfg.__FEES__["send"]/100000000.
 			else: maximum = amount
 
 			if amount > 1:
@@ -142,7 +142,7 @@ def share(param):
 				delay = int(param["--delay"])
 				delegate_pubk = common.hexlify(PUBLICKEY)
 				accounts = api.Delegate.getVoters(delegate_pubk, returnKey="accounts")
-				addresses = [a["address"] for a in accounts] # + hidden
+				addresses = [a["address"] for a in accounts]  # + hidden
 				sys.stdout.write("Checking %s-day-true-vote-weight in transaction history...\n" % delay)
 				contribution = dict([address, stats.getVoteForce(address, days=delay, delegate_pubk=delegate_pubk)] for address in [addr for addr in addresses if addr not in blacklist])
 				
@@ -151,14 +151,14 @@ def share(param):
 				max_C = C*maximum/amount
 				cumul = 0
 				# first filter
-				for address,force in [(a, f) for a, f in contribution.items() if f >= max_C]:
+				for address, force in [(a, f) for a, f in contribution.items() if f >= max_C]:
 					contribution[address] = max_C
 					cumul += force - max_C
 				# report cutted share
-				untouched_pairs = sorted([(a,f) for a, f in contribution.items() if 0. < f < max_C], key=lambda e: e[-1], reverse=True)
+				untouched_pairs = sorted([(a, f) for a, f in contribution.items() if 0. < f < max_C], key=lambda e: e[-1], reverse=True)
 				n, i = len(untouched_pairs), 0
 				bounty = cumul / n
-				for address,force in untouched_pairs:
+				for address, force in untouched_pairs:
 					if force + bounty > max_C:
 						i += 1
 						n -= 1
@@ -167,7 +167,7 @@ def share(param):
 						bounty = cumul / n
 					else:
 						break
-				for address,force in untouched_pairs[i:]:
+				for address, force in untouched_pairs[i:]:
 					contribution[address] += bounty
 
 				# apply contribution

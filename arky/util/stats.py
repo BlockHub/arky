@@ -17,7 +17,7 @@ def plot2D(*points, **kw):
 		ylabel = kw.pop("ylabel", None)
 		title = kw.pop("title", None)
 
-		plt.plot([p[0] for p in points], [p[1] for p in points], **kw)
+		plt.plot([p[:2] for p in points], **kw)
 		for x, y, label in [p for p in points if len(p) == 3]: plt.annotate(label, (x, y))
 
 		if xlabel: plt.xlabel(xlabel)
@@ -40,7 +40,7 @@ def getTransactions(timestamp=0, **param):
 		raise Exception("Address has null transactions.")
 	else:
 		raise Exception(txs.get("error", "Api error"))
-	return sorted([t for t in txs if t["timestamp"] >= timestamp], key=lambda e:e["timestamp"], reverse=True)
+	return sorted([t for t in txs if t["timestamp"] >= timestamp], key=lambda e: e["timestamp"], reverse=True)
 
 
 def getHistory(address, timestamp=0):

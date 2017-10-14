@@ -11,10 +11,10 @@ print(sys.version)
 while cfg.__NET__ != "ark":
 	api.use("ark")
 
-__daily_fees__ = 5./30  # daily server cost
+__daily_fees__ = 5. / 30  # daily server cost
 __investments__ = "AUahWfkfr5J4tYakugRbfow7RWVTK35GPW"
 __exchange__ = "APREAB1cyRLGRrTBs97BEXNv1AwAPpSQkJ"
-__tx_fee__ = cfg.__FEES__["send"]/100000000.
+__tx_fee__ = cfg.__FEES__["send"] / 100000000.
 
 # screen command line
 from optparse import OptionParser
@@ -64,8 +64,8 @@ elif wlt.balance < 200:
 
 sys.stdout.write("Checking %s-day-true-vote-weight on transaction history...\n" % 7)
 contributors = dict([address, stats.getVoteForce(address, 7)] for address in [v["address"] for v in wlt.voters if v["address"] not in [__investments__, "ARfDVWZ7Zwkox3ZXtMQQY1HYSANMB88vWE"]])
-k = 1.0/max(1, sum(contributors.values()))
-contributors = dict((a, s*k) for a, s in contributors.items())
+k = 1.0 / max(1, sum(contributors.values()))
+contributors = dict((a, s * k) for a, s in contributors.items())
 
 # # contributors = _getTrueVoteWeight([v["address"] for v in wlt.voters], delay=7)
 amount = wlt.balance
@@ -74,7 +74,7 @@ header = ["Date", datetime.datetime.now(), ""]
 content = ["ARK amount", amount, ""]
 
 # ARK to be exchanged for node fees payment
-node_invest = 2*math.ceil(USD2ARK(__daily_fees__*7)) - __tx_fee__
+node_invest = 2 * math.ceil(USD2ARK(__daily_fees__ * 7)) - __tx_fee__
 log.write("node fees       : A%.8f\n" % node_invest)
 header.append("Node fees")
 content.append(node_invest)

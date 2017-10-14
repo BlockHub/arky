@@ -29,7 +29,7 @@ if wlt.delegate["rate"] > 51:
 
 relays = api.Delegate.getCandidates()[52:]
 vote_sum = max(1, sum([float(d.get("vote", 0.)) for d in relays]))
-dist = dict([(r["address"], float(r.get("vote", 0.))/vote_sum) for r in relays])
+dist = dict([(r["address"], float(r.get("vote", 0.)) / vote_sum) for r in relays])
 balance = wlt.balance
 
 for address, ratio in dist.items():

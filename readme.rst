@@ -170,6 +170,24 @@ Toons Bitcoin address: ``3Jgib9SQiDLYML7QKBYtJUkHq2nyG6Z63D``
 Version
 =======
 
+**0.3.1**
++ ``util`` pkg:
+   * ``getTokenPrice`` improvements.
+   * ``getArkFiatPrice`` implemented.
+   * ``getArkPriceFromCryptoCompare`` implemented.
+   * ``getArkPriceFromCryptoCompareBis`` implemented.
+   * ``getAllCoinsFromCryptoCompare`` implemented.
+   * ``getArkPriceFromBittrex`` implemented.
+   * ``getArkPriceFromCryptopia`` implemented.
+   * ``getArkPriceFromLitebit`` implemented.
+   * ``getArkPriceFromCryptomate`` implemented.
++ ``test`` pkg:
+   * All of the functions implemented inside the util pkg are tested.
++ ``misc`` pkg:
+   * Fixed the ARK2USD and USD2ARK functions.
++ Some minors correction about the whitespace, indentation for PEP8 specifications.
++ Removed some unused imports.
+
 **0.3**
 
 + ``stick-arky`` released : bring all arky every where on your usb stick

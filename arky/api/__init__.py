@@ -118,8 +118,7 @@ def sendTx(tx, secret=None, secondSecret=None, url_base=None):
 
 	if cfg.__HOT_MODE__:
 		try:
-			text = requests.post(url_base + "/peer/transactions", data=transactions, headers=cfg.__HEADERS__,
-								 timeout=10).text
+			text = requests.post(url_base + "/peer/transactions", data=transactions, headers=cfg.__HEADERS__, timeout=10).text
 			data = ArkyDict(json.loads(text))
 		except Exception as error:
 			data = ArkyDict({"success": False, "error": error})
@@ -361,8 +360,32 @@ class Block:
 		return get('/api/blocks/getFee', **param)
 
 	@staticmethod
+	def getBlockchainFees(**param):
+		return get('/api/blocks/getFees', **param)
+
+	@staticmethod
 	def getBlockchainHeight(**param):
 		return get('/api/blocks/getHeight', **param)
+
+	@staticmethod
+	def getBlockchainEpoch(**param):
+		return get('/api/blocks/getEpoch', **param)
+
+	@staticmethod
+	def getBlockchainMilestone(**param):
+		return get('/api/blocks/getMilestone')
+
+	@staticmethod
+	def getBlockchainReward(**param):
+		return get('/api/blocks/getReward')
+
+	@staticmethod
+	def getBlockchainSupply(**param):
+		return get('/api/blocks/getSupply')
+
+	@staticmethod
+	def getBlockchainStatus(**param):
+		return get('/api/blocks/getStatus')
 
 	@staticmethod
 	def getForgedByAccount(publicKey, **param):

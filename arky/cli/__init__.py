@@ -11,8 +11,7 @@ __path__.append(os.path.normpath(os.path.normpath(os.path.join(rootfolder, "priv
 
 from . import escrow, network, delegate, account
 
-__doc__ = """Welcome to arky-cli 2.8 [Python %(python)s / arky %(arky)s]
-Available commands: %(sets)s""" % {"python":sys.version.split()[0], "arky":__version__, "sets": ", ".join(__all__)}
+__doc__ = """Welcome to arky-cli 2.8 [Python %(python)s / arky %(arky)s] Available commands: %(sets)s""" % {"python": sys.version.split()[0], "arky":__version__, "sets": ", ".join(__all__)}
 
 input = raw_input if not __PY3__ else input
 
@@ -82,7 +81,7 @@ def start():
 				if "link" not in argv:
 					logging.info(command)
 				else:
-					logging.info(" ".join(argv[:2]+["x"*len(e) for e in ([] if len(argv) <=2 else argv[2:])]))
+					logging.info(" ".join(argv[:2]+["x" * len(e) for e in ([] if len(argv) <= 2 else argv[2:])]))
 				try:
 					cmd(arg)
 				except Exception as error:
@@ -103,7 +102,7 @@ def execute(*lines):
 				if "link" not in argv:
 					logging.info(line)
 				else:
-					logging.info(" ".join(argv[:2]+["x"*len(e) for e in ([] if len(argv) <=2 else argv[2:])]))
+					logging.info(" ".join(argv[:2]+["x" * len(e) for e in ([] if len(argv) <= 2 else argv[2:])]))
 				try:
 					cmd(arg)
 				except Exception as error:

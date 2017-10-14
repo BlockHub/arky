@@ -6,31 +6,31 @@
 
 """
 Usage: account link [<secret> <2ndSecret>]
-       account save <name>
-       account unlink
-       account status
-       account register <username>
-       account register 2ndSecret <secret>
-       account vote [-ud] [<delegate>]
-       account send <amount> <address> [<message>]
+	   account save <name>
+	   account unlink
+	   account status
+	   account register <username>
+	   account register 2ndSecret <secret>
+	   account vote [-ud] [<delegate>]
+	   account send <amount> <address> [<message>]
 
 Options:
 -u --up    up vote delegate name folowing
 -d --down  down vote delegate name folowing
 
 Subcommands:
-    link     : link to account using secret passphrases. If secret passphrases
-               contains spaces, it must be enclosed within double quotes
-               ("secret with spaces"). If no secret given, it tries to link
-               with saved account(s).
-    save     : save linked account to a *.tok file.
-    unlink   : unlink account.
-    status   : show information about linked account.
-    register : register linked account as delegate (cost 25 ARK);
-               or
-               register second signature to linked account (cost 5 ARK).
-    vote     : up or down vote delegate.
-    send     : send ARK amount to address. You can set a 64-char message.
+	link     : link to account using secret passphrases. If secret passphrases
+			   contains spaces, it must be enclosed within double quotes
+			   ("secret with spaces"). If no secret given, it tries to link
+			   with saved account(s).
+	save     : save linked account to a *.tok file.
+	unlink   : unlink account.
+	status   : show information about linked account.
+	register : register linked account as delegate (cost 25 ARK);
+			   or
+			   register second signature to linked account (cost 5 ARK).
+	vote     : up or down vote delegate.
+	send     : send ARK amount to address. You can set a 64-char message.
 """
 
 from .. import cfg, api, core, ROOT, ArkyDict
@@ -95,7 +95,7 @@ def register(param):
 			newPublicKey = common.hexlify(core.getKeys(param["<secret>"].encode("ascii")).public)
 			tx = common.generateColdTx(KEY1, PUBLICKEY, KEY2,
 				type=1,
-				recipientId = ADDRESS,
+				recipientId=ADDRESS,
 				asset=ArkyDict(signature=ArkyDict(publicKey=newPublicKey))
 			)
 		else:
@@ -123,7 +123,7 @@ def vote(param):
 			if len(delegates):
 				tx = common.generateColdTx(KEY1, PUBLICKEY, KEY2,
 					type=3,
-					recipientId = ADDRESS,
+					recipientId=ADDRESS,
 					asset=ArkyDict(votes=delegates)
 				)
 				tx.address = ADDRESS

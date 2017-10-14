@@ -12,17 +12,17 @@ else: from . import cfg, slots
 import base58, struct, hashlib, binascii, requests, json
 
 # byte as int conversion
-basint = (lambda e:e) if __PY3__ else \
-		 (lambda e:ord(e))
+basint = (lambda e: e) if __PY3__ else \
+			(lambda e: ord(e))
 # read value as binary data from buffer
 unpack = lambda fmt, fileobj: struct.unpack(fmt, fileobj.read(struct.calcsize(fmt)))
 # write value as binary data into buffer
-pack =  lambda fmt, fileobj, value: fileobj.write(struct.pack(fmt, *value))
+pack = lambda fmt, fileobj, value: fileobj.write(struct.pack(fmt, *value))
 # read bytes from buffer
-unpack_bytes = lambda f,n: unpack("<"+"%ss"%n, f)[0]
+unpack_bytes = lambda f, n: unpack("<"+"%ss" % n, f)[0]
 # write bytes into buffer
-pack_bytes = (lambda f,v: pack("<"+"%ss"%len(v), f, (v,))) if __PY3__ else \
-			 (lambda f,v: pack("<"+"s"*len(v), f, v))
+pack_bytes = (lambda f, v: pack("<"+"%ss" % len(v), f, (v,))) if __PY3__ else \
+				(lambda f, v: pack("<"+"s" * len(v), f, v))
 
 
 # define core exceptions
@@ -194,7 +194,7 @@ def fromBytes(data):
 	tx.type, tx.timestamp = unpack("<bi", buf)
 	object.__setattr__(tx, "key_one", ArkyDict(public=unpack_bytes(buf, 33)))
 	rid = unpack_bytes(buf, 21).replace(b"\x00", b"")
-	if rid != "" : tx.recipientId = base58.b58encode_check(rid)
+	if rid != "": tx.recipientId = base58.b58encode_check(rid)
 	vf = unpack_bytes(buf, 64).replace(b"\x00", b"").decode()
 	if vf != "": tx.vendorField = vf
 	tx.amount, fee = unpack("<QQ", buf)
@@ -339,7 +339,7 @@ class Transaction(object):
 		# the four minimum attributes that defines a transaction
 		self.type = kwargs.pop("type", 0)
 		self.amount = kwargs.pop("amount", 0)
-		self.timestamp = slots.getTime() - 60 # get backward 60s to avoid error:Invalid transaction timestamp
+		self.timestamp = slots.getTime() - 60  # get backward 60s to avoid error:Invalid transaction timestamp
 		self.asset = kwargs.pop("asset", ArkyDict())
 		for attr,value in kwargs.items():
 			setattr(self, attr, value)
@@ -377,9 +377,9 @@ class Transaction(object):
 
 	def __repr__(self):
 		return "<%(signed)s type-%(type)d transaction(A%(amount).8f) from %(from)s to %(to)s>" % {
-			"signed": "double-signed" if hasattr(self, "signSignature") else \
-					  "signed" if hasattr(self, "signature") else \
-					  "unsigned",
+			"signed": "double-signed" if hasattr(self, "signSignature") else
+				"signed" if hasattr(self, "signature") else
+					"unsigned",
 			"type": self.type,
 			"amount": self.amount/100000000.,
 			"from": self.address,

@@ -78,7 +78,7 @@ class Wallet(object):
 	# list of delegate usernames a wallet can vote
 	candidates = []
 	# return wallet balance in ARK
-	balance = property(lambda obj: int(obj.account.get("balance", 0))/100000000., None, None, "")
+	balance = property(lambda obj: int(obj.account.get("balance", 0)) / 100000000., None, None, "")
 	# return wallet WIF addres
 	wif = property(lambda obj: obj.K1.wif, None, None, "")
 
